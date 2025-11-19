@@ -26,9 +26,9 @@ export default function Header({ onOpenSidebar }){
       </motion.div>
 
       <div className="flex items-center space-x-3">
-        <motion.button whileTap={{ scale:0.95 }} onClick={toggle} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
+        <button onClick={() => { console.log('Toggle clicked'); toggle(); }} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer transition-colors">
           {dark ? <SunIcon className="w-5 h-5 text-yellow-400"/> : <MoonIcon className="w-5 h-5 text-blue-400"/>}
-        </motion.button>
+        </button>
 
         <button onClick={onOpenSidebar} className="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
           <Bars3Icon className="w-6 h-6 text-gray-700 dark:text-gray-200" />

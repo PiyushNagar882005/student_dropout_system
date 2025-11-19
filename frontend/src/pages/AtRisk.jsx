@@ -1,10 +1,24 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Bar, Doughnut, Radar } from 'react-chartjs-2'
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement, RadarController } from 'chart.js'
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement, RadarController, RadialLinearScale, Filler } from 'chart.js'
 import { ExclamationTriangleIcon, CheckCircleIcon } from '@heroicons/react/24/solid'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement, RadarController)
+// Register the core and chart types used on this page
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  RadarController,
+  RadialLinearScale,
+  Filler
+)
 
 export default function AtRisk() {
   const [selectedStudent, setSelectedStudent] = useState(null)

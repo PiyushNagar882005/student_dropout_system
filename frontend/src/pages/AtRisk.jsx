@@ -99,18 +99,18 @@ export default function AtRisk() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-red-600 to-orange-600 p-8 text-white"
+        className="bg-gradient-to-r from-orange-600 to-red-600 p-8 text-white"
       >
         <div className="flex items-center gap-3 mb-2">
           <ExclamationTriangleIcon className="w-8 h-8" />
           <h1 className="text-4xl font-bold">Students at Risk</h1>
         </div>
-        <p className="text-gray-100">Early identification and intervention strategies</p>
+        <p className="text-orange-100">Early identification and intervention strategies</p>
       </motion.div>
 
       <div className="p-8 max-w-7xl mx-auto">

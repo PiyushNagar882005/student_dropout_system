@@ -9,10 +9,10 @@ export default function Dashboard() {
   const [filter, setFilter] = useState('all')
 
   const stats = [
-    { title: 'Total Students', value: '1,245', change: '+12%', icon: '👥', color: 'from-blue-500 to-cyan-500' },
-    { title: 'At Risk', value: '147', change: '-8%', icon: '⚠️', color: 'from-red-500 to-pink-500' },
-    { title: 'Predicted Dropouts', value: '89', change: '+5%', icon: '📉', color: 'from-orange-500 to-yellow-500' },
-    { title: 'Success Rate', value: '92.8%', change: '+3%', icon: '✅', color: 'from-green-500 to-emerald-500' }
+    { title: 'Total Students', value: '1,245', change: '+12%', icon: '👥', color: 'from-blue-500 to-blue-600' },
+    { title: 'At Risk', value: '147', change: '-8%', icon: '⚠️', color: 'from-orange-500 to-orange-600' },
+    { title: 'Predicted Dropouts', value: '89', change: '+5%', icon: '📉', color: 'from-red-500 to-red-600' },
+    { title: 'Success Rate', value: '92.8%', change: '+3%', icon: '✅', color: 'from-green-500 to-green-600' }
   ]
 
   const studentDistributionData = {
@@ -71,15 +71,15 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white"
+        className="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white"
       >
         <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-        <p className="text-gray-200">Real-time student dropout prediction analytics</p>
+        <p className="text-blue-100">Real-time student dropout prediction analytics</p>
       </motion.div>
 
       <div className="p-8 max-w-7xl mx-auto">

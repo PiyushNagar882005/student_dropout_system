@@ -104,24 +104,24 @@ export default function CounselorConnect() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-cyan-600 to-blue-600 p-8 text-white"
+        className="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white"
       >
         <div className="flex items-center gap-3 mb-2 justify-between">
           <div className="flex items-center gap-3">
             <ChatBubbleLeftRightIcon className="w-8 h-8" />
             <div>
               <h1 className="text-4xl font-bold">Counselor Connect</h1>
-              <p className="text-gray-100">Connect with professional counselors for guidance and support</p>
+              <p className="text-blue-100">Connect with professional counselors for guidance and support</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setAiMode(false)} className={`px-3 py-1 rounded-full ${!aiMode ? 'bg-white text-cyan-700' : 'bg-white/10 text-white'}`}>Human</button>
-            <button onClick={() => setAiMode(true)} className={`px-3 py-1 rounded-full ${aiMode ? 'bg-white text-cyan-700' : 'bg-white/10 text-white'}`}>AI Counselor</button>
+            <button onClick={() => setAiMode(false)} className={`px-3 py-1 rounded-full font-medium ${!aiMode ? 'bg-white text-blue-700' : 'bg-white/10 text-white'}`}>Human</button>
+            <button onClick={() => setAiMode(true)} className={`px-3 py-1 rounded-full font-medium ${aiMode ? 'bg-white text-blue-700' : 'bg-white/10 text-white'}`}>AI Counselor</button>
           </div>
         </div>
       </motion.div>
@@ -141,18 +141,18 @@ export default function CounselorConnect() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-gray-800 rounded-2xl p-6 cursor-pointer border border-gray-700 hover:border-cyan-500/50 transition-colors shadow-lg flex flex-col justify-between"
+                  className="bg-white dark:bg-slate-800 rounded-2xl p-6 cursor-pointer border border-gray-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors shadow-md flex flex-col justify-between"
                   onClick={() => setSelectedCounselor({ id: 'ai', name: 'AI Counselor', specialization: 'Virtual Assistant', status: 'online', ai: true })}
                 >
                   <div>
-                    <div className="w-12 h-12 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold text-lg mb-4">AI</div>
-                    <h3 className="text-lg font-bold text-white mb-1">AI Counselor</h3>
-                    <p className="text-cyan-400 text-sm font-semibold mb-3">Instant automated guidance</p>
-                    <p className="text-gray-400 text-xs mb-4">Get quick tips and resources from our AI assistant.</p>
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-4">AI</div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">AI Counselor</h3>
+                    <p className="text-blue-600 dark:text-blue-400 text-sm font-semibold mb-3">Instant automated guidance</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-xs mb-4">Get quick tips and resources from our AI assistant.</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1"><span className="text-yellow-400">⭐</span><span className="text-white font-semibold">4.5</span></div>
-                    <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded-lg text-sm font-semibold">Start</button>
+                    <div className="flex items-center gap-1"><span>⭐</span><span className="text-gray-900 dark:text-white font-semibold">4.5</span></div>
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-semibold transition-colors">Start</button>
                   </div>
                 </motion.div>
               )}

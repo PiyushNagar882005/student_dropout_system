@@ -68,12 +68,12 @@ export default function Contact() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-green-600 to-emerald-600 p-8 text-white"
+        className="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white"
       >
         <div className="flex items-center gap-3 mb-2">
           <EnvelopeIcon className="w-8 h-8" />

@@ -1,4 +1,8 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file if present
+load_dotenv()
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
@@ -26,6 +30,10 @@ app.add_middleware(
 BASE_DIR = pathlib.Path(__file__).resolve().parent
 model_path = BASE_DIR / "models" / "dropout_model.pkl"
 model = joblib.load(model_path) if model_path.exists() else None
+
+# Mount auth router (lazy import to avoid circular)
+from . import auth as auth_router
+app.include_router(auth_router.router)
 
 class StudentData(BaseModel):
     age: int

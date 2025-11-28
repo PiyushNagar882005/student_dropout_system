@@ -1,10 +1,25 @@
-import React, { useState } from 'react'
+// AtRisk.jsx
+import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Bar, Doughnut, Radar } from 'react-chartjs-2'
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement, RadarController, RadialLinearScale, Filler } from 'chart.js'
-import { ExclamationTriangleIcon, CheckCircleIcon } from '@heroicons/react/24/solid'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  RadarController,
+  RadialLinearScale,
+  Filler
+} from 'chart.js'
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 
-// Register the core and chart types used on this page
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,92 +35,185 @@ ChartJS.register(
   Filler
 )
 
+/* Reusable ChartCard */
+function ChartCard({ title, children, actions, ariaLabel, className = '' }) {
+  return (
+    <div
+      className={`bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 flex flex-col ${className}`}
+      role="region"
+      aria-label={ariaLabel || title}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <h2 className="text-xl font-bold text-white">{title}</h2>
+        {actions ? <div className="ml-4">{actions}</div> : null}
+      </div>
+
+      <div className="flex-1 w-full flex items-center justify-center">
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export default function AtRisk() {
   const [selectedStudent, setSelectedStudent] = useState(null)
+  const [liveStats, setLiveStats] = useState(null)
+  const doughnutRef = useRef(null)
+  const radarRef = useRef(null)
+  const barRef = useRef(null)
 
-  const atRiskStudents = [
-    { id: 1, name: 'John Doe', semester: '4th', attendance: 45, grades: 38, risk: 'High', riskScore: 8.5 },
-    { id: 2, name: 'Sarah Smith', semester: '3rd', attendance: 60, grades: 50, risk: 'Medium', riskScore: 6.2 },
-    { id: 3, name: 'Mike Johnson', semester: '5th', attendance: 35, grades: 42, risk: 'Critical', riskScore: 9.1 },
-    { id: 4, name: 'Emma Wilson', semester: '2nd', attendance: 55, grades: 48, risk: 'High', riskScore: 7.8 },
-    { id: 5, name: 'Alex Brown', semester: '4th', attendance: 40, grades: 40, risk: 'Critical', riskScore: 8.9 }
-  ]
+  // sample at-risk students list
+  const atRiskStudents = useMemo(
+    () => [
+      { id: 1, name: 'John Doe', semester: '4th', attendance: 45, grades: 38, risk: 'High', riskScore: 8.5 },
+      { id: 2, name: 'Sarah Smith', semester: '3rd', attendance: 60, grades: 50, risk: 'Medium', riskScore: 6.2 },
+      { id: 3, name: 'Mike Johnson', semester: '5th', attendance: 35, grades: 42, risk: 'Critical', riskScore: 9.1 },
+      { id: 4, name: 'Emma Wilson', semester: '2nd', attendance: 55, grades: 48, risk: 'High', riskScore: 7.8 },
+      { id: 5, name: 'Alex Brown', semester: '4th', attendance: 40, grades: 40, risk: 'Critical', riskScore: 8.9 }
+    ],
+    []
+  )
 
-  const riskDistributionData = {
-    labels: ['Safe', 'At Risk', 'High Risk', 'Critical'],
-    datasets: [{
-      label: 'Students by Risk Level',
-      data: [1098, 89, 45, 13],
-      backgroundColor: [
-        'rgba(34, 197, 94, 0.6)',
-        'rgba(245, 158, 11, 0.6)',
-        'rgba(239, 68, 68, 0.6)',
-        'rgba(127, 29, 29, 0.6)'
-      ],
-      borderColor: [
-        'rgb(34, 197, 94)',
-        'rgb(245, 158, 11)',
-        'rgb(239, 68, 68)',
-        'rgb(127, 29, 29)'
-      ],
-      borderWidth: 2
-    }]
+  // simulated fetch to demonstrate dynamic updates (replace with real API if you have one)
+  useEffect(() => {
+    let mounted = true
+    async function fetchData() {
+      // simulate latency
+      await new Promise((r) => setTimeout(r, 200))
+      if (!mounted) return
+      setLiveStats({
+        riskDistribution: [1098, 89, 45, 13],
+        riskFactors: [95, 88, 72, 65, 58, 45],
+        departmentRisk: [34, 12, 8, 15, 3]
+      })
+    }
+    fetchData()
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  // Chart datasets (memoized)
+  const riskDistributionData = useMemo(
+    () => ({
+      labels: ['Safe', 'At Risk', 'High Risk', 'Critical'],
+      datasets: [
+        {
+          label: 'Students by Risk Level',
+          data: (liveStats && liveStats.riskDistribution) || [1098, 89, 45, 13],
+          backgroundColor: [
+            'rgba(34,197,94,0.6)',
+            'rgba(245,158,11,0.6)',
+            'rgba(239,68,68,0.6)',
+            'rgba(127,29,29,0.6)'
+          ],
+          borderColor: ['rgb(34,197,94)', 'rgb(245,158,11)', 'rgb(239,68,68)', 'rgb(127,29,29)'],
+          borderWidth: 2
+        }
+      ]
+    }),
+    [liveStats]
+  )
+
+  const riskFactorsData = useMemo(
+    () => ({
+      labels: ['Attendance', 'Grades', 'Engagement', 'Family Support', 'Financial Strain', 'Health Issues'],
+      datasets: [
+        {
+          label: 'Impact on Dropout Risk',
+          data: (liveStats && liveStats.riskFactors) || [95, 88, 72, 65, 58, 45],
+          borderColor: 'rgb(239,68,68)',
+          backgroundColor: 'rgba(239,68,68,0.18)',
+          borderWidth: 2,
+          fill: true
+        }
+      ]
+    }),
+    [liveStats]
+  )
+
+  const departmentRiskData = useMemo(
+    () => ({
+      labels: ['Engineering', 'Commerce', 'Science', 'Arts', 'Medicine'],
+      datasets: [
+        {
+          label: 'High Risk Students',
+          data: (liveStats && liveStats.departmentRisk) || [34, 12, 8, 15, 3],
+          backgroundColor: [
+            'rgba(239, 68, 68, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+            'rgba(236, 72, 153, 0.8)',
+            'rgba(168, 85, 247, 0.8)',
+            'rgba(99, 102, 241, 0.8)'
+          ],
+          borderRadius: 8
+        }
+      ]
+    }),
+    [liveStats]
+  )
+
+  // Chart common options
+  const commonOptions = useMemo(
+    () => ({
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#f3f4f6' } }, tooltip: { mode: 'nearest', intersect: true } },
+      scales: {
+        x: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } },
+        y: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } }
+      }
+    }),
+    []
+  )
+
+  // download helper (handles different react-chartjs-2 versions)
+  function downloadChart(ref, filename = 'chart.png') {
+    try {
+      const chartObj = ref?.current
+      const canvas = chartObj?.canvas || (chartObj && chartObj)
+      const chartCanvas = canvas?.canvas || canvas
+      if (!chartCanvas) return
+      const url = chartCanvas.toDataURL('image/png')
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+    } catch (err) {
+      console.error('Chart export failed', err)
+    }
   }
 
-  const riskFactorsData = {
-    labels: ['Attendance', 'Grades', 'Engagement', 'Family Support', 'Financial Strain', 'Health Issues'],
-    datasets: [{
-      label: 'Impact on Dropout Risk',
-      data: [95, 88, 72, 65, 58, 45],
-      borderColor: 'rgb(239, 68, 68)',
-      backgroundColor: 'rgba(239, 68, 68, 0.2)',
-      borderWidth: 2,
-      fill: true
-    }]
-  }
-
-  const departmentRiskData = {
-    labels: ['Engineering', 'Commerce', 'Science', 'Arts', 'Medicine'],
-    datasets: [{
-      label: 'High Risk Students',
-      data: [34, 12, 8, 15, 3],
-      backgroundColor: [
-        'rgba(239, 68, 68, 0.8)',
-        'rgba(245, 158, 11, 0.8)',
-        'rgba(236, 72, 153, 0.8)',
-        'rgba(168, 85, 247, 0.8)',
-        'rgba(99, 102, 241, 0.8)'
-      ],
-      borderRadius: 8
-    }]
-  }
-
+  // risk color helpers (kept from your original)
   const getRiskColor = (risk) => {
-    switch(risk) {
-      case 'Critical': return 'from-red-600 to-red-500'
-      case 'High': return 'from-orange-600 to-orange-500'
-      case 'Medium': return 'from-yellow-600 to-yellow-500'
-      default: return 'from-green-600 to-green-500'
+    switch (risk) {
+      case 'Critical':
+        return 'from-red-600 to-red-500'
+      case 'High':
+        return 'from-orange-600 to-orange-500'
+      case 'Medium':
+        return 'from-yellow-600 to-yellow-500'
+      default:
+        return 'from-green-600 to-green-500'
     }
   }
 
   const getRiskBgColor = (risk) => {
-    switch(risk) {
-      case 'Critical': return 'bg-red-500/10 border-red-500/30'
-      case 'High': return 'bg-orange-500/10 border-orange-500/30'
-      case 'Medium': return 'bg-yellow-500/10 border-yellow-500/30'
-      default: return 'bg-green-500/10 border-green-500/30'
+    switch (risk) {
+      case 'Critical':
+        return 'bg-red-500/10 border-red-500/30'
+      case 'High':
+        return 'bg-orange-500/10 border-orange-500/30'
+      case 'Medium':
+        return 'bg-yellow-500/10 border-yellow-500/30'
+      default:
+        return 'bg-green-500/10 border-green-500/30'
     }
   }
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-orange-600 to-red-600 p-8 text-white"
-      >
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-orange-600 to-red-600 p-8 text-white">
         <div className="flex items-center gap-3 mb-2">
           <ExclamationTriangleIcon className="w-8 h-8" />
           <h1 className="text-4xl font-bold">Students at Risk</h1>
@@ -115,12 +223,7 @@ export default function AtRisk() {
 
       <div className="p-8 max-w-7xl mx-auto">
         {/* Quick Stats */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ staggerChildren: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ staggerChildren: 0.1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {[
             { label: 'High Risk Students', value: '58', icon: '⚠️' },
             { label: 'Critical Cases', value: '13', icon: '🚨' },
@@ -144,44 +247,61 @@ export default function AtRisk() {
           ))}
         </motion.div>
 
-        {/* Charts */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8"
-        >
-          {/* Doughnut Chart */}
-          <div className="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-6">Risk Distribution</h2>
-            <Doughnut data={riskDistributionData} options={{ maintainAspectRatio: true, plugins: { legend: { labels: { color: '#f3f4f6' } } } }} />
-          </div>
+        {/* ROW 1: Doughnut + Radar (side-by-side, larger) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <ChartCard title="Risk Distribution" ariaLabel="Risk distribution" className="h-[30rem]">
+            <div className="w-full h-full p-4">
+              <Doughnut ref={doughnutRef} data={riskDistributionData} options={{ maintainAspectRatio: false, plugins: { legend: { labels: { color: '#f3f4f6' } } } }} />
+            </div>
+            <div className="mt-2 flex gap-2 justify-end w-full">
+              <button onClick={() => downloadChart(doughnutRef, 'risk-distribution.png')} className="text-sm px-3 py-2 bg-slate-700 rounded-md text-white">Export PNG</button>
+            </div>
+          </ChartCard>
 
-          {/* Radar Chart */}
-          <div className="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-6">Risk Factors</h2>
-            <Radar data={riskFactorsData} options={{ maintainAspectRatio: true, plugins: { legend: { labels: { color: '#f3f4f6' } } }, scales: { r: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } } } }} />
-          </div>
-        </motion.div>
+          <ChartCard title="Risk Factors" ariaLabel="Risk factors radar" className="h-[30rem]">
+            <div className="w-full h-full p-4">
+              <Radar
+                ref={radarRef}
+                data={riskFactorsData}
+                options={{
+                  maintainAspectRatio: false,
+                  plugins: { legend: { labels: { color: '#f3f4f6' } } },
+                  scales: { r: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } } }
+                }}
+              />
+            </div>
+            <div className="mt-2 flex gap-2 justify-end w-full">
+              <button onClick={() => downloadChart(radarRef, 'risk-factors.png')} className="text-sm px-3 py-2 bg-slate-700 rounded-md text-white">Export PNG</button>
+            </div>
+          </ChartCard>
+        </div>
 
-        {/* Bar Chart */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 mb-8"
-        >
-          <h2 className="text-xl font-bold text-white mb-6">High Risk Students by Department</h2>
-          <Bar data={departmentRiskData} options={{ maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { labels: { color: '#f3f4f6' } } }, scales: { x: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } }, y: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } } } }} />
-        </motion.div>
+        {/* ROW 2: Bar chart full-width */}
+        <div className="mb-8">
+          <ChartCard title="High Risk Students by Department" ariaLabel="Department high risk" className="h-[34rem] w-full">
+            <div className="w-full h-full p-4">
+              <Bar
+                ref={barRef}
+                data={departmentRiskData}
+                options={{
+                  maintainAspectRatio: false,
+                  indexAxis: 'y',
+                  plugins: { legend: { labels: { color: '#f3f4f6' } } },
+                  scales: {
+                    x: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } },
+                    y: { ticks: { color: '#f3f4f6' }, grid: { color: '#374151' } }
+                  }
+                }}
+              />
+            </div>
+            <div className="mt-2 flex gap-2 justify-end w-full">
+              <button onClick={() => downloadChart(barRef, 'department-risk.png')} className="text-sm px-3 py-2 bg-slate-700 rounded-md text-white">Export PNG</button>
+            </div>
+          </ChartCard>
+        </div>
 
         {/* At-Risk Students List */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 overflow-hidden"
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 overflow-hidden">
           <div className="p-6 border-b border-gray-700">
             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
               <ExclamationTriangleIcon className="w-6 h-6 text-orange-500" />
@@ -255,18 +375,8 @@ export default function AtRisk() {
 
         {/* Student Detail Modal */}
         {selectedStudent && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-            onClick={() => setSelectedStudent(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gray-800 rounded-2xl p-8 max-w-md border border-gray-700"
-            >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedStudent(null)}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} onClick={(e) => e.stopPropagation()} className="bg-gray-800 rounded-2xl p-8 max-w-md border border-gray-700">
               <h3 className="text-2xl font-bold text-white mb-4">{selectedStudent.name}</h3>
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center">
@@ -297,12 +407,7 @@ export default function AtRisk() {
                   <li>✓ Monitor attendance</li>
                 </ul>
               </div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedStudent(null)}
-                className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2 rounded-lg"
-              >
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setSelectedStudent(null)} className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2 rounded-lg">
                 Close
               </motion.button>
             </motion.div>

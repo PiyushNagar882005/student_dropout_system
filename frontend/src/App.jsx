@@ -27,21 +27,9 @@ export default function App() {
   const isAuthenticated = useAuth((state) => state.isAuthenticated)
   const userRole = useAuth((state) => state.role)
 
-  // If not authenticated, show public landing and auth routes (Welcome, Login, Signup)
-    if (!isAuthenticated) {
-    return (
-      <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/welcome" element={<Welcome />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/auth/success" element={<AuthSuccess />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    )
-  }
+  // Render header/sidebar for both public and authenticated views so the
+  // hamburger can toggle the sidebar on login/welcome pages too.
+  // When unauthenticated we show only public routes inside the same layout.
 
   // Redirect login page if already authenticated
   if (isAuthenticated && (window.location.pathname === '/login' || window.location.pathname === '/signup' || window.location.pathname === '/welcome')) {
@@ -61,13 +49,22 @@ export default function App() {
           <main className="flex-1 px-6 pb-6">
             <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.35 }}>
               <Routes>
-                {/* Admin Routes */}
-                {userRole === 'admin' && (
+                {/* Root: show Welcome to guests, Home/Admin to authenticated users */}
+                <Route path="/" element={isAuthenticated ? (userRole === 'admin' ? <AdminDashboard /> : <Home />) : <Welcome />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/welcome" element={<Welcome />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/auth/success" element={<AuthSuccess />} />
+
+                {/* Admin Routes (authenticated) */}
+                {isAuthenticated && userRole === 'admin' && (
                   <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 )}
 
-                {/* User Routes */}
-                {userRole === 'user' && (
+                {/* User Routes (authenticated) */}
+                {isAuthenticated && userRole === 'user' && (
                   <>
                     <Route path="/" element={<Home />} />
                     <Route path="/predict" element={<StudentPredict />} />
@@ -81,7 +78,7 @@ export default function App() {
                 )}
 
                 {/* Catch-all redirect */}
-                <Route path="*" element={<Navigate to={userRole === 'admin' ? '/admin-dashboard' : '/'} replace />} />
+                <Route path="*" element={<Navigate to={isAuthenticated ? (userRole === 'admin' ? '/admin-dashboard' : '/') : '/'} replace />} />
               </Routes>
             </motion.div>
           </main>

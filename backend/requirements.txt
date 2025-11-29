@@ -6,3 +6,4 @@ joblib
 httpx
 PyJWT
 python-dotenv
+chromadb

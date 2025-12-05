@@ -21,6 +21,7 @@ import StudentPredict from './pages/StudentPredict'
 import Analytics from './pages/Analytics'
 import Services from './pages/Services'
 import AdminDashboard from './pages/AdminDashboard'
+import AdminSubmissions from './pages/AdminSubmissions'
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -60,7 +61,10 @@ export default function App() {
 
                 {/* Admin Routes (authenticated) */}
                 {isAuthenticated && userRole === 'admin' && (
-                  <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                  <>
+                    <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                    <Route path="/admin/submissions" element={<AdminSubmissions />} />
+                  </>
                 )}
 
                 {/* User Routes (authenticated) */}

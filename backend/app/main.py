@@ -89,6 +89,23 @@ def model_features_endpoint():
         return {"error": "Model not found."}
     return {"features": model_features, "medians": model_medians}
 
+
+@app.get("/api/admin/submissions")
+def admin_get_submissions(limit: int = 50):
+    """Return the last `limit` submissions from the local backup JSONL file."""
+    submissions_file = BASE_DIR.parent / 'data' / 'submissions.jsonl'
+    if not submissions_file.exists():
+        return {"submissions": []}
+    try:
+        with open(submissions_file, 'r', encoding='utf-8') as fh:
+            lines = fh.read().strip().splitlines()
+        # take last `limit` lines and parse JSON
+        last = lines[-limit:]
+        entries = [json.loads(l) for l in last if l.strip()]
+        return {"submissions": entries}
+    except Exception as e:
+        return {"error": f"Failed to read submissions file: {str(e)}"}
+
 @app.post("/api/students/predict")
 def predict_dropout(data: StudentData):
     if not clf:
@@ -190,32 +207,38 @@ def predict_dropout(data: StudentData):
             "medians_used": model_medians
         }
 
-        # persist submission for logged-in users into ChromaDB collection (if available)
+        # persist submission into ChromaDB collection (if available) and always write a local JSONL backup
         try:
-            if data.user and submissions_collection is not None:
-                doc_id = f"{data.user.get('id','anon')}_{int(datetime.utcnow().timestamp()*1000)}"
-                metadata = {
-                    'timestamp': datetime.utcnow().isoformat() + 'Z',
-                    'user': data.user,
-                    'incoming': incoming,
-                    'model_features': model_features,
-                    'feature_vector': features[0],
-                    'prediction': bool(pred),
-                    'probability': proba
-                }
-                doc_text = data.user.get('email') or data.user.get('name') or doc_id
+            doc_id = f"{(data.user.get('id') if data.user and isinstance(data.user, dict) else 'anon')}_{int(datetime.utcnow().timestamp()*1000)}"
+            metadata = {
+                'timestamp': datetime.utcnow().isoformat() + 'Z',
+                'user': data.user,
+                'incoming': incoming,
+                'model_features': model_features,
+                'feature_vector': features[0],
+                'prediction': bool(pred),
+                'probability': proba
+            }
+            doc_text = (data.user.get('email') if data.user and isinstance(data.user, dict) else None) or (data.user.get('name') if data.user and isinstance(data.user, dict) else None) or doc_id
+
+            # Try add to ChromaDB if available
+            if submissions_collection is not None:
                 try:
                     submissions_collection.add(ids=[doc_id], metadatas=[metadata], documents=[doc_text])
                 except Exception as e:
-                    print('ChromaDB add failed, falling back to file write:', e)
-                    # fallback to file write if Chroma add fails
-                    submissions_dir = BASE_DIR.parent / 'data'
-                    submissions_dir.mkdir(parents=True, exist_ok=True)
-                    submissions_file = submissions_dir / 'submissions.jsonl'
-                    with open(submissions_file, 'a', encoding='utf-8') as fh:
-                        fh.write(json.dumps(metadata, ensure_ascii=False) + "\n")
+                    print('ChromaDB add failed, will still write local backup:', e)
+
+            # Always append a local backup JSONL entry (one JSON per line)
+            try:
+                submissions_dir = BASE_DIR.parent / 'data'
+                submissions_dir.mkdir(parents=True, exist_ok=True)
+                submissions_file = submissions_dir / 'submissions.jsonl'
+                with open(submissions_file, 'a', encoding='utf-8') as fh:
+                    fh.write(json.dumps(metadata, ensure_ascii=False) + "\n")
+            except Exception as e:
+                print('Failed to write backup submission file:', e)
         except Exception as e:
-            print('Failed to save submission to ChromaDB:', e)
+            print('Failed to save submission to ChromaDB/file backup:', e)
 
         return response
     except Exception as e:

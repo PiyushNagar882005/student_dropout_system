@@ -10,4 +10,9 @@ export async function predictStudent(payload) {
   return res.data;
 }
 
+export async function getSubmissions(limit = 50) {
+  const res = await api.get(`/admin/submissions?limit=${limit}`);
+  return res.data;
+}
+
 export default api;

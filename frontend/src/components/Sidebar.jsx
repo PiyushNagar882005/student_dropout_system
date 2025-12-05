@@ -16,7 +16,8 @@ const userLinks = [
 ]
 
 const adminLinks = [
-  { label: 'Admin Dashboard', to: '/admin-dashboard', icon: Cog6ToothIcon }
+  { label: 'Admin Dashboard', to: '/admin-dashboard', icon: Cog6ToothIcon },
+  { label: 'Submissions', to: '/admin/submissions', icon: InboxIcon }
 ]
 
 export default function Sidebar({ isOpen = false, onClose = () => {} }){

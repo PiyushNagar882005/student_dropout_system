@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
+import os
 
 # Load environment variables from a .env file if present
 load_dotenv()
@@ -23,6 +24,9 @@ origins = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
 ]
+configured_frontend_url = os.getenv("FRONTEND_URL")
+if configured_frontend_url:
+    origins.append(configured_frontend_url.rstrip("/"))
 
 app.add_middleware(
     CORSMiddleware,

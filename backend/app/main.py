@@ -139,6 +139,27 @@ def predict_dropout(data: StudentData):
             else:
                 incoming[k] = v
 
+        # Translate the legacy form into the scales used by the trained model.
+        # The source dataset has no attendance or parent-support columns, so
+        # attendance is represented by approved units and parent support is not
+        # used as a model feature.
+        if 'grades' in incoming and incoming.get('grades') is not None:
+            try:
+                grade_percent = max(0.0, min(100.0, float(incoming['grades'])))
+                incoming.setdefault('Admission_grade', 95.0 + (grade_percent * 0.95))
+                semester_grade = grade_percent / 5.0
+                incoming.setdefault('Curricular_units_1st_sem_(grade)', semester_grade)
+                incoming.setdefault('Curricular_units_2nd_sem_(grade)', semester_grade)
+            except (TypeError, ValueError):
+                pass
+        if 'attendance' in incoming and incoming.get('attendance') is not None:
+            try:
+                attendance = max(0.0, min(100.0, float(incoming['attendance'])))
+                incoming.setdefault('Curricular_units_1st_sem_(approved)', round(6 * attendance / 100))
+                incoming.setdefault('Curricular_units_2nd_sem_(approved)', round(6 * attendance / 100))
+            except (TypeError, ValueError):
+                pass
+
         for feat in model_features:
             # try direct name, then mapped legacy name, then lower-cased keys
             val = None

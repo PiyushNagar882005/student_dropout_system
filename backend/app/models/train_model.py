@@ -32,10 +32,10 @@ def find_target_column(df: pd.DataFrame):
 
 
 if not os.path.exists(data_path):
-    print(f"❌ Dataset not found at {data_path}")
+    print(f"Dataset not found at {data_path}")
     raise SystemExit(1)
 
-print("✅ Dataset found. Preparing to train model...")
+print("Dataset found. Preparing to train model...")
 
 # Try to auto-detect delimiter (handles comma vs tab-delimited CSVs)
 try:
@@ -54,7 +54,7 @@ print(f"Dataset columns: {list(df.columns)[:20]}{'...' if len(df.columns)>20 els
 
 target_col = find_target_column(df)
 if not target_col:
-    print("❌ Could not find a suitable target column (expected 'Target' or similar). Please inspect the CSV.")
+    print("Could not find a suitable target column (expected 'Target' or similar). Please inspect the CSV.")
     raise SystemExit(1)
 
 print(f"Using '{target_col}' as target column")
@@ -83,7 +83,7 @@ if not available_features:
     available_features = [c for c in numeric_cols if c != target_col]
 
 if not available_features:
-    print("❌ No numeric features found to train on. Please provide numeric columns in the dataset.")
+    print("No numeric features found to train on. Please provide numeric columns in the dataset.")
     raise SystemExit(1)
 
 print(f"Using features: {available_features}")
@@ -114,7 +114,7 @@ model.fit(X_train, y_train)
 preds = model.predict(X_test)
 acc = accuracy_score(y_test, preds)
 
-print(f"✅ Training complete. Test accuracy: {acc:.4f}")
+print(f"Training complete. Test accuracy: {acc:.4f}")
 print("Classification report:\n", classification_report(y_test, preds))
 
 model_dir = os.path.join("backend", "app", "models")
@@ -122,4 +122,4 @@ os.makedirs(model_dir, exist_ok=True)
 model_path = os.path.join(model_dir, "dropout_model.pkl")
 joblib.dump({'model': model, 'features': available_features, 'medians': medians}, model_path)
 
-print(f"✅ Model and metadata saved to: {model_path}")
+print(f"Model and metadata saved to: {model_path}")

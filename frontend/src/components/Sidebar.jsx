@@ -35,8 +35,8 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }){
       <aside className={`w-72 bg-white dark:bg-slate-900 backdrop-blur border-r border-gray-200 dark:border-slate-800 p-6 min-h-screen fixed md:static left-0 top-0 bottom-0 z-50 transform transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="mb-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className={`${userRole === 'admin' ? 'from-orange-600 to-orange-700' : 'from-blue-600 to-blue-700'} bg-gradient-to-br w-10 h-10 rounded-lg flex items-center justify-center shadow-md`}>
-              <span className="text-white font-bold text-sm">{userRole === 'admin' ? 'AD' : 'SD'}</span>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-md overflow-hidden">
+              <img src="/dropout-logo.svg" alt="" className="w-full h-full" />
             </div>
             <div>
               <h3 className="text-gray-900 dark:text-white font-semibold text-sm">Student Dropout</h3>

@@ -30,10 +30,10 @@ export default function Header({ onOpenSidebar }){
   return (
     <header className="max-w-6xl mx-auto flex items-center justify-between py-4 px-2 relative z-40 border-b border-gray-200 dark:border-slate-700">
       <motion.div initial={{ x: -50, opacity:0 }} animate={{ x:0, opacity:1 }} transition={{ duration:0.4 }} className="flex items-center space-x-3 cursor-pointer">
-        <button onClick={() => navigate('/')} className="bg-gradient-to-br from-blue-600 to-blue-700 w-10 h-10 rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-shadow hover:from-blue-700 hover:to-blue-800">
-          <motion.span whileHover={{ scale:1.1 }} className="text-white font-black text-sm">SD</motion.span>
+        <button onClick={() => navigate('/')} aria-label="Go to home" className="w-10 h-10 rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+          <motion.img whileHover={{ scale:1.1 }} src="/dropout-logo.svg" alt="" className="w-full h-full" />
         </button>
-        <h1 onClick={() => navigate('/')} className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Student Dropout</h1>
+        <h1 onClick={() => navigate('/')} className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Student Dropout Prediction System</h1>
       </motion.div>
 
       <div className="flex items-center space-x-4">

@@ -22,7 +22,7 @@ export default function AuthSuccess(){
       return
     }
     // Exchange token for user info
-    const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+    const BACKEND = import.meta.env.VITE_BACKEND_URL || 'https://student-dropout-system-1-oigt.onrender.com'
     fetch(`${BACKEND}/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`

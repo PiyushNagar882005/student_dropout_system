@@ -32,7 +32,7 @@ export default function ResetPassword(){
     }
     setLoading(true)
     try {
-      const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+      const BACKEND = import.meta.env.VITE_BACKEND_URL || 'https://student-dropout-system-1-oigt.onrender.com'
       const res = await fetch(`${BACKEND}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

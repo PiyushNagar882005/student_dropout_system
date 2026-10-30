@@ -16,7 +16,7 @@ export default function ForgotPassword(){
     }
     setLoading(true)
     try {
-      const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+      const BACKEND = import.meta.env.VITE_BACKEND_URL || 'https://student-dropout-system-1-oigt.onrender.com'
       const res = await fetch(`${BACKEND}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

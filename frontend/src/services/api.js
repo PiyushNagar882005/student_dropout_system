@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://student-dropout-system-1-oigt.onrender.com';
 
 const api = axios.create({
   baseURL: `${backendUrl.replace(/\/$/, '')}/api`,
